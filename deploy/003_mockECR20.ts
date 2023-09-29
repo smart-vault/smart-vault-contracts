@@ -5,12 +5,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
     const { deployer } = await getNamedAccounts();
 
-    const MockToken = await deployments.deploy("MockToken", {
-        args: [],
-        from: deployer,
-        log: true,
-    });
-    console.log("deployed MockToken at %s", MockToken.address);
+    // const MockToken = await deployments.deploy("MockToken", {
+    //     args: [],
+    //     from: deployer,
+    //     log: true,
+    // });
+    // console.log("deployed MockToken at %s", MockToken.address);
 
 };
 
