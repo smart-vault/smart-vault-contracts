@@ -8,12 +8,10 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "./IVaultNft.sol";
 import './AllowlistOwnable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
     using Address for address;
     using EnumerableSet for EnumerableSet.UintSet;
-    using SafeERC20 for IERC20;
 
     enum EscrowStatus {Default, Created, Offered, Redeemed, Cancelled }
     struct Escrow {
@@ -162,7 +160,9 @@ contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
         require(escrow.status == EscrowStatus.Offered, "NftEscrow: is not offered");
         require(IERC20(tokenAddress).balanceOf(address(this)) >= escrow.amount, "NftEscrow: insufficient funds");
         
-        IERC20(tokenAddress).safeTransfer(escrow.owner, escrow.amount);
+        bool transferSuccess = IERC20(tokenAddress).transfer(escrow.owner, escrow.amount);
+        require(transferSuccess, "Failed to transfer tokens");
+
         nft.burn(tokenId);
         escrow.status = EscrowStatus.Redeemed;
         // Set redeem timestamp to now when claimed
@@ -173,13 +173,14 @@ contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
     }
 
     function cancelEscrow(uint256 tokenId) external returns (bool) {
-        ERC721Burnable nft = ERC721Burnable(nftAddress);
+        ERC721 nft = ERC721(nftAddress);
         require(nft.ownerOf(tokenId) == address(this), "NftEscrow: contract not NFT owner");
 
         Escrow storage escrow = escrows[tokenId];
         require(( _msgSender() == escrow.owner || isOwnerOrInAllowlisted(_msgSender())), "NftEscrow: not escrow owner or isOwnerOrInAllowlisted");
         require((escrow.status == EscrowStatus.Offered || escrow.status == EscrowStatus.Created), "NftEscrow: is not offered");
 
+        
         nft.safeTransferFrom(address(this),  _msgSender(), tokenId);
 
         // reset state so we know its cancelled
