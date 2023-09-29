@@ -8,10 +8,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "./IVaultNft.sol";
 import './AllowlistOwnable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
     using Address for address;
     using EnumerableSet for EnumerableSet.UintSet;
+    using SafeERC20 for IERC20;
 
     enum EscrowStatus {Default, Created, Offered, Redeemed, Cancelled }
     struct Escrow {
@@ -160,7 +162,7 @@ contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
         require(escrow.status == EscrowStatus.Offered, "NftEscrow: is not offered");
         require(IERC20(tokenAddress).balanceOf(address(this)) >= escrow.amount, "NftEscrow: insufficient funds");
         
-        IERC20(tokenAddress).transfer(escrow.owner, escrow.amount);
+        IERC20(tokenAddress).safeTransfer(escrow.owner, escrow.amount);
         nft.burn(tokenId);
         escrow.status = EscrowStatus.Redeemed;
         // Set redeem timestamp to now when claimed

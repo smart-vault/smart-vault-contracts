@@ -91,7 +91,8 @@ contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
 
     // admin to send to treasury
     function withdraw(uint amount) external onlyOwner {
-        token.safeTransfer(destination, amount);
+        bool transferSuccess = token.transfer(destination, amount);
+        require(transferSuccess, "Failed to transfer tokens");
     }
 
     function authorizedTransferFrom(address from, address to, uint256 tokenId) public  {
