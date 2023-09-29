@@ -160,8 +160,8 @@ contract NftRedemptionToken is ERC721Holder, AllowlistOwnable {
         require(escrow.status == EscrowStatus.Offered, "NftEscrow: is not offered");
         require(IERC20(tokenAddress).balanceOf(address(this)) >= escrow.amount, "NftEscrow: insufficient funds");
         
-        nft.burn(tokenId);
         IERC20(tokenAddress).transfer(escrow.owner, escrow.amount);
+        nft.burn(tokenId);
         escrow.status = EscrowStatus.Redeemed;
         // Set redeem timestamp to now when claimed
         escrow.timestamp = block.timestamp;
