@@ -8,12 +8,15 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './AllowlistOwnable.sol';
 import "./IVaultNft.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, AllowlistOwnable, ERC721Burnable, IVaultNFT {
     using Counters for Counters.Counter;
+    using SafeERC20 for IERC20;
 
     Counters.Counter private _tokenIdCounter;
     uint256 public mintFee = 10000000000000000; // 0.01 token
@@ -83,12 +86,12 @@ contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
 
     function setToken(IERC20 _token) public onlyOwner {
         token = IERC20(_token);
-        token.approve(address(this), type(uint256).max);
+        token.safeApprove(address(this), type(uint256).max);
     }
 
     // admin to send to treasury
     function withdraw(uint amount) external onlyOwner {
-        token.transfer(destination, amount);
+        token.safeTransfer(destination, amount);
     }
 
     function authorizedTransferFrom(address from, address to, uint256 tokenId) public  {
