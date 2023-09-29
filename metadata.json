@@ -1,0 +1,19 @@
+{
+  "name": "SMART Vault NFT",
+  "description": "A unit in the SMART Vault",
+  "image": "ipfs://bafybeifqbklvzxxs57npdtoctdbfozubqipmrhvfdtv767z37ydlux44yu",
+  "attributes": [
+    {
+      "trait_type": "Generation",
+      "value": "Alpha"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Unit"
+    },
+    {
+      "trait_type": "Asset",
+      "value": "SMART Vault"
+    }
+  ]
+}
