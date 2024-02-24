@@ -5,12 +5,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
     const { deployer } = await getNamedAccounts();
 
-    const NftRedemptionToken = await deployments.deploy("NftRedemptionToken", {
-        args: [],
-        from: deployer,
-        log: true,
-    });
-    console.log("deployed NftRedemptionToken at %s", NftRedemptionToken.address);
+    // const NftRedemptionToken = await deployments.deploy("NftRedemptionToken", {
+    //     args: [],
+    //     from: deployer,
+    //     log: true,
+    // });
+    // console.log("deployed NftRedemptionToken at %s", NftRedemptionToken.address);
 
 };
 

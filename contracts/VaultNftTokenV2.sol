@@ -9,10 +9,9 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import './AllowlistOwnable.sol';
-import "./IVaultNft.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, AllowlistOwnable, ERC721Burnable, IVaultNFT {
+contract VaultNftTokenV2 is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, AllowlistOwnable, ERC721Burnable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
@@ -93,11 +92,6 @@ contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
         require(transferSuccess, "Failed to transfer tokens");
     }
 
-    function authorizedTransferFrom(address from, address to, uint256 tokenId) public  {
-        require( msg.sender == redeemAuthorizer, "caller is not authorized to transfer");
-        super._safeTransfer(from, to, tokenId, "");
-    }
-
     function safeMintUri(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
@@ -153,18 +147,10 @@ contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    function preAuthorizeRedeemer(address authorizer) public onlyOwner {
-        redeemAuthorizer = authorizer;
-    }
 
     // The following functions are overrides required by Solidity.
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
-    }
-
-    function authorizedBurn(uint256 tokenId) public {
-        require(msg.sender == redeemAuthorizer, "caller is not authorized to burn");
-        _burn(tokenId);
     }
 
     function tokenURI(uint256 tokenId)
@@ -189,7 +175,7 @@ contract VaultNftToken is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, 
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable, ERC721URIStorage, IERC165)
+        override(ERC721, ERC721Enumerable, ERC721URIStorage)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);

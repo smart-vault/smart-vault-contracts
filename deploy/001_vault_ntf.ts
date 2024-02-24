@@ -5,12 +5,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployments, getNamedAccounts } = hre;
     const { deployer } = await getNamedAccounts();
 
-    const VaultNftToken = await deployments.deploy("VaultNftToken", {
+    const VaultNftTokenV2 = await deployments.deploy("VaultNftTokenV2", {
         args: [],
         from: deployer,
         log: true,
     });
-    console.log("deployed VaultNftToken at %s", VaultNftToken.address);
+    console.log("deployed VaultNftTokenV2 at %s", VaultNftTokenV2.address);
 
 };
 
